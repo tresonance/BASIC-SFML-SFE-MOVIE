@@ -2,3 +2,4 @@ obj
 *.o
 obj/*
 *.txt
+sfe-github-bin
