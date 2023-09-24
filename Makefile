@@ -12,14 +12,26 @@ CLEAR		=	\033[H\e[J
 
 NAME		= sfe-github-bin
 
-BASE_DIR = ./
-OBJ_DIR		=	$(BASE_DIR)obj/
+#IBRAHIMA_DIR=/Users/ibrahimatraore/
+COURSES_DIR=~/COURSES
+ONLY_BOARD_DIR =$(COURSES_DIR)/ONLY_BOARD
+# Where to find headers 
+SFE_SFML_LIBS=$(COURSES_DIR)/SFE_SFML_IMGUI_LIBS
+BASIC_SFE_DIR=$(SFE_SFML_LIBS)/basic_sfe
+
+OBJ_DIR		=	obj/
+LIBS		=  -std=c++17 -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+CXX := g++
+
+NO_WARNINGS_FLAGS=-Wno-deprecated -Wno-c++11-extensions -Wno-inconsistent-missing-override -lsfml-graphics -lsfml-window -lsfml-system
+SFML_HEADERS_DIR=${BASIC_SFE_DIR}/sfml_headers 
+
+# SO Library Name without prefix lib and extensio .so
+SO_LIBRARY_NAME = sfe_sfml_imgui_svg_bin
+
+CXXFLAGS=-std=c++11 $(NO_WARNINGS_FLAGS) -I$(SFML_HEADERS_DIR) -I$(FFmpeg_HEADERS_DIR) -I$(SFE_HEADERS_DIR) -framework OpenCL 
 
 
-CFLAGS = -I/Library/Frameworks/sfeMovie.framework/Versions/2.0/Headers  -I/usr/local/Cellar/sfml/2.5.1_1/include -framework OpenCL
-
-LIBS		= -std=c++17 -lsfml-graphics -lsfml-window -lsfml-system 
-CXX := g++ 
 
 
 all: $(NAME)
@@ -40,7 +52,8 @@ $(NAME):    $(OBJ_DIR)MediaInfo.o $(OBJ_DIR)StreamSelector.o $(OBJ_DIR)UserInter
 	@echo ""
 	@echo "$(CYAN) MAKE ** Building the executable ** $(RESET)"
 	@echo "$(PURPLE) \n\t\t\t........................ $(RESET)"
-	@$(CXX) $(CFLAGS) -o $(NAME) $(OBJ_DIR)MediaInfo.o $(OBJ_DIR)StreamSelector.o $(OBJ_DIR)UserInterface.o $(OBJ_DIR)main.o  $(LIBS) /Library/Frameworks/sfeMovie.framework/Versions/2.0/sfeMovie && ./$(NAME) 2>/dev/null
+	$(shell rm libsfe_sfml_imgui_svg_bin.so && ln -s ~/COURSES/SFE_SFML_IMGUI_LIBS/basic_all_in_one/libsfe_sfml_imgui_svg_bin.so libsfe_sfml_imgui_svg_bin.so > /dev/null )
+	@$(CXX) $(CXXFLAGS) -L`pwd`  -l$(SO_LIBRARY_NAME) $(LIBS) -o $(NAME) $(OBJ_DIR)MediaInfo.o $(OBJ_DIR)StreamSelector.o $(OBJ_DIR)UserInterface.o $(OBJ_DIR)main.o   && ./$(NAME) 2>/dev/null
 	@echo ""
 
 
@@ -48,14 +61,12 @@ $(NAME):    $(OBJ_DIR)MediaInfo.o $(OBJ_DIR)StreamSelector.o $(OBJ_DIR)UserInter
 .PHONY: clean
 clean:	
 	@echo "\033[48;5;15;38;5;25;1mMAKE ** Removing object files and executable... $(RESET)"
-	@rm -rf $(NAME)   $(OBJ_DIR)*.o $(ONLY_BOARD_OBJ_DIR)*.o $(MY_OPENCL_OBJ_DIR)*.o
+	@rm -rf $(NAME)   $(OBJ_DIR)*.o 
 
 
 fclean: 
 	
 	@rm -rf $(OBJ_DIR)
-	@rm -rf $(ONLY_BOARD_OBJ_DIR)
-	@rm -rf $(MY_OPENCL_OBJ_DIR)
 	@rm -rf $(NAME)
 	@rm -rf EXT_BIN
 	@rm -rf MY_OPENCL_BIN
